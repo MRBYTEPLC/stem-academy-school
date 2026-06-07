@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<!--
+╔══════════════════════════════════════════════════════════════════╗
+║         STEM INDUSTRIAL CODE ACADEMY  —  v4.0 FINAL             ║
+║  Author: Jafet de la F.  |  Updated: Multi-user + Auth v4.0     ║
+║  How to use:                                                     ║
+║    1. Save this file as  index.html                              ║
+║    2. Double-click the file — it opens in any browser            ║
+║    3. No internet needed after fonts load once                   ║
+║  Sections in this file (search with Ctrl+F):                     ║
+║    [SECTION: FONTS & GOOGLE]                                     ║
+║    [SECTION: CSS VARIABLES — change colors here]                 ║
+║    [SECTION: HOME SCREEN HTML]                                   ║
+║    [SECTION: APP TABS HTML]                                      ║
+║    [SECTION: SIDEBAR HTML per module]                            ║
+║    [SECTION: MATH BLOCKS engine]                                 ║
+║    [SECTION: LOGIC GATES engine]                                 ║
+║    [SECTION: CODE FLOW — loops & IF/ELSE]                        ║
+║    [SECTION: CONVEYOR PLC engine]                                ║
+║    [SECTION: COLOR SORTER engine]                                ║
+║    [SECTION: ENERGY OPTIMIZER engine]                            ║
+║    [SECTION: VISIT & LIKE COUNTERS]                              ║
+╚══════════════════════════════════════════════════════════════════╝
+-->
+<title>🏭 STEM Industrial Code Academy v4.0</title>
+
+<!-- ════════════════════════════════════════════════════════════════
+     [SECTION: FONTS & GOOGLE]
+     To change fonts: replace the family names below and in CSS.
+     Orbitron = titles/headers  |  Share Tech Mono = code text
+     Exo 2 = body text  |  Dancing Script = signature
+     ════════════════════════════════════════════════════════════════ -->
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fredoka+One&family=Baloo+2:wght@400;600;700;800&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/styles.css">
+
+<!-- Firebase placeholders -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════════════════════════
+     [SECTION: HOME SCREEN HTML]
+     To add a new module card: copy one .mod-card div and change
+     the onclick="openApp(N)" number to the next module index.
+     ════════════════════════════════════════════════════════════════ -->
+<!-- LOGIN SCREEN -->
+<div id="login" class="screen active">
+  <div class="login-blob" style="width:180px;height:180px;background:#fde68a;top:-40px;left:-40px;animation-delay:0s;animation-duration:7s;"></div>
+  <div class="login-blob" style="width:220px;height:220px;background:#c7d2fe;top:-60px;right:-60px;animation-delay:1.5s;animation-duration:8s;"></div>
+  <div class="login-blob" style="width:160px;height:160px;background:#bbf7d0;bottom:-30px;left:10%;animation-delay:3s;animation-duration:6s;"></div>
+  <div class="login-blob" style="width:200px;height:200px;background:#fce7f3;bottom:-50px;right:5%;animation-delay:2s;animation-duration:9s;"></div>
+  <div class="login-card">
+    <span class="login-logo">&#x1F916;</span>
+    <div class="login-title">Logic &amp; Code Studio</div>
+    <div class="login-subtitle">STEM &middot; Industrial &middot; Academy &middot; v4.0</div>
+    <div class="login-field">
+      <label>&#x1F464; Username</label>
+      <input type="text" id="login-user" placeholder="Enter your username..." autocomplete="username" />
+    </div>
+    <div class="login-field">
+      <label>&#x1F512; Password</label>
+      <input type="password" id="login-pass" placeholder="Enter your password..." autocomplete="current-password" />
+    </div>
+    <button class="login-btn" onclick="doLogin()">&#x1F680; Enter the Academy</button>
+    <div class="login-error" id="login-error"></div>
+    <div class="login-hint">Learn &middot; Build &middot; Code! &#x1F31F;</div>
+  </div>
+</div>
+
+<div id="home" class="screen">
+  <div class="scanlines"></div>
+  <div class="home-inner">
+    <button id="home-logout-btn" onclick="logOut()">&#x1F6AA; Log Out</button>
+
+    <!-- Top badge label — change text here -->
+    <div class="home-badge">STEM &nbsp;·&nbsp; INDUSTRIAL &nbsp;·&nbsp; CODE &nbsp;·&nbsp; ACADEMY &nbsp;·&nbsp; v4.0</div>
+
+    <!-- Main title -->
+    <h1 class="home-title">
+      <span class="g">LOGIC</span> <span class="c">&amp;</span><br>
+      <span class="p">CODE</span> <span class="g">STUDIO</span>
+    </h1>
+
+    <!-- Subtitle — change description text here -->
+    <p class="home-sub">Six Progressive Modules &nbsp;·&nbsp; Logic Gates &nbsp;·&nbsp; Loops &nbsp;·&nbsp; Real Industrial Simulations</p>
+
+    <!-- ── VISIT COUNTER + LIKE BUTTON ──────────────────────────
+         Counters are stored in localStorage (browser memory).
+         They persist across page refreshes automatically.
+         To reset counters: open browser DevTools → Application
+         → Local Storage → delete sa_visits and sa_likes keys.
+         ─────────────────────────────────────────────────────── -->
+    <div class="counter-row">
+      <div class="ctr-box">
+        <div class="ctr-val" id="visit-count">0</div>
+        <div class="ctr-lbl">&#x1F465; TOTAL LOGINS</div>
+      </div>
+      <!-- Like button — click to add +1 heart -->
+      <button class="like-btn" onclick="addLike()" title="Click to like!">
+        ❤️ <span class="lk-cnt" id="like-count">0</span>
+      </button>
+      <div class="ctr-box">
+        <div class="ctr-val" id="online-count">—</div>
+        <div class="ctr-lbl">&#x1F4F6; ONLINE NOW</div>
+      </div>
+    </div>
+
+    <!-- ── 6 MODULE CARDS ────────────────────────────────────────
+         Each card calls openApp(index) — index matches JS array.
+         0=Math Blocks, 1=Logic Gates, 2=Code Flow,
+         3=Conveyor PLC, 4=Color Sorter, 5=Energy Optimizer
+         ─────────────────────────────────────────────────────── -->
+    <div class="mod-grid">
+
+      <!-- Card 0 — Math Blocks -->
+      <div class="mod-card lv1" onclick="openApp(0)">
+        <div class="lvl">⬢ LEVEL 1 · BEGINNER</div>
+        <div class="ico">🧩</div>
+        <div class="mname">MATH BLOCKS</div>
+        <div class="mdesc">Build math circuits with wires. Add, Multiply, Subtract, Divide. Double-click INPUT to type any number!</div>
+      </div>
+
+      <!-- Card 1 — Logic Gates -->
+      <div class="mod-card lv1" onclick="openApp(1)">
+        <div class="lvl">⬢ LEVEL 1 · BEGINNER</div>
+        <div class="ico">⚡</div>
+        <div class="mname">LOGIC GATES</div>
+        <div class="mdesc">Wire AND, OR, NOT, NAND gates. Double-click INPUT SWITCH to toggle TRUE/FALSE signals.</div>
+      </div>
+
+      <!-- Card 2 — Code Flow -->
+      <div class="mod-card lv2" onclick="openApp(2)">
+        <div class="lvl">◆ LEVEL 2 · INTERMEDIATE</div>
+        <div class="ico">🔄</div>
+        <div class="mname">CODE FLOW</div>
+        <div class="mdesc">Program IF/ELSE decisions and FOR, WHILE, DO-WHILE loops with real numbers and everyday examples.</div>
+      </div>
+
+      <!-- Card 3 — Conveyor PLC -->
+      <div class="mod-card lv2" onclick="openApp(3)">
+        <div class="lvl">◆ LEVEL 2 · INTERMEDIATE</div>
+        <div class="ico">🏭</div>
+        <div class="mname">CONVEYOR BELT PLC</div>
+        <div class="mdesc">Wire E-STOP, START, SENSOR, COUNTER, MOTOR blocks. Motor runs when logic is satisfied — stop when count hits target!</div>
+      </div>
+
+      <!-- Card 4 — Color Sorter -->
+      <div class="mod-card lv3" onclick="openApp(4)">
+        <div class="lvl">★ LEVEL 3 · ADVANCED</div>
+        <div class="ico">🔴🟢</div>
+        <div class="mname">COLOR SORTER</div>
+        <div class="mdesc">Write IF/ELSE code to route products by color. Zero-defect sorting challenge with live animation.</div>
+      </div>
+
+      <!-- Card 5 — Energy Optimizer -->
+      <div class="mod-card lv3" onclick="openApp(5)">
+        <div class="lvl">★ LEVEL 3 · ADVANCED</div>
+        <div class="ico">⚡🏗️</div>
+        <div class="mname">ENERGY OPTIMIZER</div>
+        <div class="mdesc">Click line cards to toggle ON/OFF. Hit Production ≥ 100 u/hr AND Grid ≤ 120 kW at the same time!</div>
+      </div>
+
+    </div><!-- end .mod-grid -->
+
+    <!-- START button -->
+    <div class="home-btn-row">
+      <button class="start-btn" onclick="openApp(0)">▶ START ACADEMY</button>
+    </div>
+
+    <!-- ── SIGNATURE ──────────────────────────────────────────────
+         [MODIFY] Change name here. Font: Dancing Script (cursive).
+         ─────────────────────────────────────────────────────────  -->
+    <div class="signature">Created by Jafet de la F.</div>
+
+  </div><!-- end .home-inner -->
+</div><!-- end #home -->
+
+
+<!-- ════════════════════════════════════════════════════════════════
+     [SECTION: APP SCREEN HTML]
+     Top bar + tabs + sidebar (filled by JS) + workspace
+     ════════════════════════════════════════════════════════════════ -->
+<div id="app" class="screen">
+
+  <!-- Top navigation bar -->
+  <div id="topbar">
+    <div id="topbar-logo">🏭 STEM ACADEMY</div>
+
+    <!-- Module tabs — one per module -->
+    <div id="mod-tabs">
+      <!-- [MODIFY] Tab labels here -->
+      <button class="tab-btn active" onclick="switchMod(0)" id="tab0">🧩 Math Blocks</button>
+      <button class="tab-btn"        onclick="switchMod(1)" id="tab1">⚡ Logic Gates</button>
+      <button class="tab-btn"        onclick="switchMod(2)" id="tab2">🔄 Code Flow</button>
+      <button class="tab-btn"        onclick="switchMod(3)" id="tab3">🏭 Conveyor PLC</button>
+      <button class="tab-btn"        onclick="switchMod(4)" id="tab4">🔴 Color Sorter</button>
+      <button class="tab-btn"        onclick="switchMod(5)" id="tab5">⚡ Energy</button>
+    </div>
+
+    <!-- Action buttons -->
+    <div id="topbar-right" style="gap:8px;">
+      <button class="tb-btn run"   id="run-btn"   onclick="handleRun()">▶ RUN</button>
+      <button class="tb-btn erase" id="erase-btn" onclick="handleErase()">🗑 ERASE</button>
+      <button class="tb-btn home"                 onclick="goHome()">⌂ HOME</button>
+    </div>
+  </div>
+
+  <!-- Main layout: sidebar + workspace -->
+  <div id="content">
+
+    <!-- Sidebar: filled dynamically by JS based on active module -->
+    <div id="sidebar"></div>
+
+    <!-- Workspace: canvas or sim panel depending on module -->
+    <div id="workspace">
+
+      <!-- Canvas: used by modules 0 (Math Blocks) and 1 (Logic Gates) -->
+      <div id="cv-wrap"><canvas id="mc"></canvas></div>
+
+      <!-- ── MODULE 2: CODE FLOW ──────────────────────────────── -->
+      <div id="sim2" class="sim-pnl">
+        <div>
+          <div class="sim-ttl">🔄 Code Flow — Loops &amp; Decision Statements</div>
+          <div class="sim-sub">Concept: Sequential Control · IF/ELSE Branching · Loop Iteration</div>
+        </div>
+        <div class="info-box">
+          💡 <strong>How to use:</strong> Pick a statement type (tabs below). Set numbers/conditions. Click <strong>▶ EXECUTE</strong>.
+          Read the trace carefully — it shows each line the computer processes in order!
+        </div>
+
+        <!-- Sub-tabs: IF/ELSE | FOR | WHILE | DO-WHILE -->
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          <button class="gbtn go"   id="cf-t-if"    onclick="showCF('if')"   >🌿 IF / ELSE</button>
+          <button class="gbtn purp" id="cf-t-for"   onclick="showCF('for')"  >🔄 FOR Loop</button>
+          <button class="gbtn purp" id="cf-t-while" onclick="showCF('while')">🔄 WHILE Loop</button>
+          <button class="gbtn purp" id="cf-t-dw"    onclick="showCF('dw')"   >🔄 DO-WHILE</button>
+        </div>
+
+        <!-- IF / ELSE pane -->
+        <div id="cf-if" class="cf-pane">
+          <div class="sim-row">
+            <div class="sc" style="flex:1.4;">
+              <h4>🌿 IF / ELSE SETUP</h4>
+              <div class="icard ic">
+                <strong>What is IF/ELSE?</strong>
+                Checks ONE condition → if TRUE runs the IF block, if FALSE runs ELSE. Only one branch runs!
+                <div class="code-ex">IF (today == Saturday OR Sunday):<br>  → Stay home 🏠<br>ELSE:<br>  → Go to work 💼</div>
+              </div>
+              <div class="frow">
+                <label>Variable:</label>
+                <!-- [MODIFY] Add more variable options here -->
+                <select class="sel-in" id="if-var" onchange="ifVarChange()">
+                  <option value="temp">🌡 Temperature (°C)</option>
+                  <option value="speed">💨 Motor Speed (RPM)</option>
+                  <option value="day">📅 Day of Week</option>
+                  <option value="stock">📦 Stock Level</option>
+                </select>
+              </div>
+              <!-- Number input row (hidden when day is selected) -->
+              <div id="if-num-row" class="frow">
+                <label>Current value:</label>
+                <input type="number" class="num-in" id="if-val" value="95">
+                <label>Threshold:</label>
+                <input type="number" class="num-in" id="if-thresh" value="90">
+              </div>
+              <!-- Day selector row (shown only when day is selected) -->
+              <div id="if-day-row" class="frow" style="display:none;">
+                <label>Select day:</label>
+                <select class="sel-in" id="if-day">
+                  <option>Monday</option><option>Tuesday</option><option>Wednesday</option>
+                  <option>Thursday</option><option>Friday</option><option>Saturday</option><option>Sunday</option>
+                </select>
+              </div>
+              <button class="gbtn go" onclick="runIF()" style="margin-top:6px;">▶ EXECUTE IF/ELSE</button>
+            </div>
+            <div class="sc" style="flex:2;">
+              <h4>📟 EXECUTION TRACE — Read this carefully!</h4>
+              <div class="trace-box" id="if-out">Press EXECUTE to see the step-by-step trace...</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- FOR Loop pane -->
+        <div id="cf-for" class="cf-pane" style="display:none;">
+          <div class="sim-row">
+            <div class="sc" style="flex:1.4;">
+              <h4>🔄 FOR LOOP SETUP</h4>
+              <div class="icard ic">
+                <strong>What is a FOR Loop?</strong>
+                Repeats an action an <em>exact</em> number of times. Use it when you know in advance how many repetitions you need.
+                <div class="code-ex">Example: Start=1, End=5, Step=1<br>FOR i=1: do action<br>FOR i=2: do action<br>FOR i=3: do action<br>FOR i=4: do action<br>FOR i=5: do action ← STOPS here<br>Total: 5 iterations</div>
+              </div>
+              <div class="frow"><label>Start (i =):</label><input type="number" class="num-in" id="for-s" value="1" min="0" max="50"></div>
+              <div class="frow"><label>End (i ≤):</label><input type="number" class="num-in" id="for-e" value="6" min="1" max="50"></div>
+              <div class="frow"><label>Step (+):</label><input type="number" class="num-in" id="for-st" value="1" min="1" max="10"></div>
+              <div class="frow">
+                <label>Action:</label>
+                <select class="sel-in" id="for-act">
+                  <!-- [MODIFY] Add/change action options here -->
+                  <option value="cookie">🍪 Drop cookie into box</option>
+                  <option value="stamp">🏷️ Stamp product label</option>
+                  <option value="weld">🔧 Weld joint segment</option>
+                  <option value="alarm">🚨 Sound alarm beep</option>
+                  <option value="bell">🔔 Ring school bell</option>
+                  <option value="print">🖨️ Print a line</option>
+                </select>
+              </div>
+              <button class="gbtn go" onclick="runFOR()" style="margin-top:6px;">▶ EXECUTE FOR LOOP</button>
+            </div>
+            <div class="sc" style="flex:2;">
+              <h4>📟 EXECUTION TRACE</h4>
+              <div class="trace-box" id="for-out">Press EXECUTE to see the trace...</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- WHILE Loop pane -->
+        <div id="cf-while" class="cf-pane" style="display:none;">
+          <div class="sim-row">
+            <div class="sc" style="flex:1.4;">
+              <h4>🔄 WHILE LOOP SETUP</h4>
+              <div class="icard ic">
+                <strong>What is a WHILE Loop?</strong>
+                Checks condition FIRST. If FALSE at start → loop body NEVER runs! Loops only while condition stays TRUE.
+                <div class="code-ex">Example: Start=0, Limit=4, Step=1<br>WHILE (0 &lt; 4): run → counter=1<br>WHILE (1 &lt; 4): run → counter=2<br>WHILE (2 &lt; 4): run → counter=3<br>WHILE (3 &lt; 4): run → counter=4<br>WHILE (4 &lt; 4)? NO → EXIT loop<br>Total: 4 iterations</div>
+              </div>
+              <div class="frow"><label>Counter starts:</label><input type="number" class="num-in" id="wh-s" value="0" min="0" max="100"></div>
+              <div class="frow"><label>Loop while &lt;</label><input type="number" class="num-in" id="wh-l" value="5" min="1" max="100"></div>
+              <div class="frow"><label>Increment by:</label><input type="number" class="num-in" id="wh-i" value="1" min="1" max="20"></div>
+              <div class="frow">
+                <label>Context:</label>
+                <select class="sel-in" id="wh-ctx">
+                  <option value="pump">🏭 Industrial: Drain pump cycles</option>
+                  <option value="fan">💨 Industrial: Cooling fan</option>
+                  <option value="snooze">😴 Everyday: Snooze alarm</option>
+                  <option value="count">🔢 Math: Count up to limit</option>
+                </select>
+              </div>
+              <button class="gbtn go" onclick="runWHILE()" style="margin-top:6px;">▶ EXECUTE WHILE</button>
+            </div>
+            <div class="sc" style="flex:2;">
+              <h4>📟 EXECUTION TRACE</h4>
+              <div class="trace-box" id="wh-out">Press EXECUTE to see the trace...</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- DO-WHILE pane -->
+        <div id="cf-dw" class="cf-pane" style="display:none;">
+          <div class="sim-row">
+            <div class="sc" style="flex:1.4;">
+              <h4>🔄 DO-WHILE SETUP</h4>
+              <div class="icard ic">
+                <strong>What is DO-WHILE?</strong>
+                Runs the body FIRST, then checks. Always executes at least <em>1 time</em> even if condition starts FALSE!
+                <div class="code-ex">Example: Start=1, Limit=3<br>DO: action (1st run, no check yet!)<br>WHILE (1 ≤ 3)? YES → continue<br>DO: action (2nd run)<br>WHILE (2 ≤ 3)? YES → continue<br>DO: action (3rd run)<br>WHILE (3 ≤ 3)? YES → continue<br>DO: action (4th run)<br>WHILE (4 ≤ 3)? NO → EXIT<br>Even if Start=99: runs ONCE first!</div>
+              </div>
+              <div class="frow"><label>Start value:</label><input type="number" class="num-in" id="dw-s" value="1" min="0" max="100"></div>
+              <div class="frow"><label>Continue while ≤</label><input type="number" class="num-in" id="dw-l" value="3" min="0" max="100"></div>
+              <div class="frow">
+                <label>Context:</label>
+                <select class="sel-in" id="dw-ctx">
+                  <option value="alarm">🚨 Industrial: Alarm siren (always sounds once!)</option>
+                  <option value="test">🔧 Industrial: Machine startup self-test</option>
+                  <option value="hw">📚 Everyday: Check if you have homework</option>
+                  <option value="menu">🖥️ Software: Show menu at least once</option>
+                </select>
+              </div>
+              <button class="gbtn go" onclick="runDW()" style="margin-top:6px;">▶ EXECUTE DO-WHILE</button>
+            </div>
+            <div class="sc" style="flex:2;">
+              <h4>📟 EXECUTION TRACE</h4>
+              <div class="trace-box" id="dw-out">Press EXECUTE to see the trace...</div>
+            </div>
+          </div>
+        </div>
+      </div><!-- end #sim2 -->
+
+      <!-- ── MODULE 3: CONVEYOR BELT PLC ──────────────────────── -->
+      <div id="sim3" class="sim-pnl">
+        <div>
+          <div class="sim-ttl">🏭 PLC Conveyor Belt — Block Wiring Simulator</div>
+          <div class="sim-sub">Concept: PLC Ladder Logic · Sensor Integration · Counter Control</div>
+        </div>
+        <div class="info-box">
+          💡 <strong>Step-by-step instructions:</strong><br>
+          1. Add blocks from the sidebar: <strong>E-STOP · START · SENSOR · COUNTER · MOTOR</strong><br>
+          2. Wire them: click an output ● pin → then click an input ● pin on another block<br>
+          3. Set the Box Target number, then click <strong>▶ START SIMULATION</strong><br>
+          4. <strong>Double-click START</strong> to toggle it ON/OFF &nbsp;|&nbsp; <strong>Double-click E-STOP</strong> to trigger emergency stop<br>
+          5. MOTOR turns ON when START=ON AND E-STOP=OFF → COUNTER counts boxes → MOTOR stops at target!
+        </div>
+        <div class="sim-row">
+          <!-- Controls panel -->
+          <div class="sc" style="max-width:250px;">
+            <h4>🛠 ADD PLC BLOCKS</h4>
+            <div class="sp-grid">
+              <button class="sp-btn spg" onclick="plcSpawn('ESTOP')">🛑 E-STOP</button>
+              <button class="sp-btn spi" onclick="plcSpawn('START')">🟢 START BTN</button>
+              <button class="sp-btn spc" onclick="plcSpawn('SENSOR')">👁 SENSOR</button>
+              <button class="sp-btn spm" onclick="plcSpawn('COUNTER')">🔢 COUNTER</button>
+              <button class="sp-btn spo" onclick="plcSpawn('MOTOR')">⚙️ MOTOR</button>
+              <button class="sp-btn spg" onclick="plcSpawn('AND_G')">⚡ AND Gate</button>
+            </div>
+            <div style="margin-top:10px;">
+              <div class="frow"><label>Box Target:</label><input type="number" class="num-in" id="plc-tgt" value="8" min="1" max="30" style="width:60px;"></div>
+              <button class="gbtn go"  onclick="runPLC()"   style="width:100%;margin-top:4px;">▶ START SIMULATION</button>
+              <button class="gbtn rst" onclick="resetPLC()" style="width:100%;margin-top:6px;">↺ RESET PLC</button>
+            </div>
+            <div id="plc-status" class="score-d" style="margin-top:8px;font-size:11px;">Status: Add blocks and wire them...</div>
+          </div>
+          <!-- PLC canvas -->
+          <div style="flex:1;">
+            <canvas id="plc-canvas"></canvas>
+            <div style="font-size:11px;color:var(--dimgray);text-align:center;margin-top:4px;">
+              Drag blocks to arrange · Click output ● then input ● to wire · Double-click E-STOP or START to toggle
+            </div>
+          </div>
+        </div>
+      </div><!-- end #sim3 -->
+
+      <!-- ── MODULE 4: COLOR SORTER ──────────────────────────── -->
+      <div id="sim4" class="sim-pnl">
+        <div>
+          <div class="sim-ttl">🔴🟢 QC Automated Color Sorter</div>
+          <div class="sim-sub">Concept: IF/ELSE Decision Tree · Pneumatic Arm Control · Zero-Defect Manufacturing</div>
+        </div>
+        <div class="info-box">
+          💡 <strong>Step-by-step instructions:</strong><br>
+          1. Look at the bins below: <strong>Left Bin = Red products</strong>, <strong>Right Bin = Green products</strong><br>
+          2. Fill ALL three dropdowns in the IF/ELSE program block<br>
+          3. Click <strong>⬇ DOWNLOAD TO PLC &amp; RUN</strong> — 6 products will be sorted live<br>
+          ⚠️ <strong>Common errors:</strong> Same bin in IF and ELSE = Logic Error &nbsp;|&nbsp; Wrong color = Defect!
+        </div>
+        <div class="sim-row">
+          <!-- IF/ELSE code block -->
+          <div class="sc">
+            <h4>📟 WRITE YOUR IF/ELSE SORTING PROGRAM</h4>
+            <div style="font-family:'Share Tech Mono',monospace;font-size:13px;line-height:2.6;">
+              <span style="color:var(--cyan)">IF</span> <span style="color:var(--gray)">(</span>&nbsp;Product_Color&nbsp;==&nbsp;
+              <select id="s-ifc" class="sel-in"><option value="">-- color --</option><option>Red</option><option>Green</option></select>
+              <span style="color:var(--gray)">&nbsp;):</span><br>
+              &nbsp;&nbsp;<span style="color:var(--dimgray)">Route_To_Bin</span>&nbsp;=&nbsp;
+              <select id="s-ifb" class="sel-in"><option value="">-- bin --</option><option value="Left">Left Bin</option><option value="Right">Right Bin</option></select><br>
+              <span style="color:var(--pink)">ELSE:</span><br>
+              &nbsp;&nbsp;<span style="color:var(--dimgray)">Route_To_Bin</span>&nbsp;=&nbsp;
+              <select id="s-elb" class="sel-in"><option value="">-- bin --</option><option value="Left">Left Bin</option><option value="Right">Right Bin</option></select>
+            </div>
+            <div style="display:flex;gap:8px;margin-top:12px;">
+              <button class="gbtn go"  onclick="runSorter()">⬇ DOWNLOAD TO PLC &amp; RUN</button>
+              <button class="gbtn rst" onclick="resetSorter()">↺ RESET</button>
+            </div>
+          </div>
+          <!-- Live counter -->
+          <div class="sc" style="min-width:160px;max-width:190px;">
+            <h4>📊 LIVE COUNTER</h4>
+            <div style="font-family:'Share Tech Mono',monospace;font-size:13px;line-height:2.4;">
+              <div>Left 🔴: <span style="color:var(--red);font-weight:700;" id="s-lc">0</span></div>
+              <div>Right🟢: <span style="color:var(--green);font-weight:700;" id="s-rc">0</span></div>
+              <div style="color:var(--dimgray);font-size:11px;">Processed: <span style="color:var(--cyan);" id="s-proc">0 / 6</span></div>
+            </div>
+          </div>
+        </div>
+        <!-- Animated sorter canvas -->
+        <canvas id="sort-cv" style="width:100%;height:155px;background:#060d1a;border:1px solid var(--border);border-radius:8px;display:block;"></canvas>
+      </div><!-- end #sim4 -->
+
+      <!-- ── MODULE 5: ENERGY OPTIMIZER ──────────────────────── -->
+      <div id="sim5" class="sim-pnl">
+        <div>
+          <div class="sim-ttl">⚡ Factory Energy Grid Optimizer</div>
+          <div class="sim-sub">Concept: Constrained Optimization · Resource Allocation · Multi-variable Decision</div>
+        </div>
+        <div class="info-box">
+          💡 <strong>Instructions:</strong> Click the factory line cards to toggle them ON or OFF.
+          You must satisfy <strong>BOTH</strong> constraints at the same time:<br>
+          &nbsp;&nbsp;✅ <strong>Production ≥ 100 units/hr</strong> &nbsp;·&nbsp; ✅ <strong>Grid Load ≤ 120 kW</strong><br>
+          There are multiple valid combinations — can you find them all? Click <strong>COMMIT</strong> when ready!
+        </div>
+        <div class="sim-row">
+          <!-- Clickable line cards -->
+          <div style="flex:2;">
+            <!-- [MODIFY] Line data is defined in JS — search for ELINES array -->
+            <div class="e-grid" id="e-cards"></div>
+          </div>
+          <!-- Live metrics panel -->
+          <div class="sc" style="min-width:200px;">
+            <h4>📈 LIVE GRID METRICS</h4>
+            <div style="display:flex;flex-direction:column;gap:12px;">
+              <div>
+                <div class="prow">
+                  <span class="plbl">Production:</span>
+                  <div class="pwrap"><div class="pfill pr-ok" id="e-pb" style="width:0%"></div></div>
+                  <span class="pval" id="e-pv">0 u/hr</span>
+                </div>
+                <div style="font-size:10px;color:var(--dimgray);margin-top:2px;padding-left:123px;">Goal ≥ 100 u/hr</div>
+              </div>
+              <div>
+                <div class="prow">
+                  <span class="plbl">Grid Load:</span>
+                  <div class="pwrap"><div class="pfill pr-ok" id="e-gb" style="width:0%"></div></div>
+                  <span class="pval" id="e-gv">0 kW</span>
+                </div>
+                <div style="font-size:10px;color:var(--dimgray);margin-top:2px;padding-left:123px;">Limit ≤ 120 kW</div>
+              </div>
+              <!-- Status summary -->
+              <div id="e-status" style="font-family:'Share Tech Mono',monospace;font-size:11px;padding:8px;background:#000;border-radius:6px;line-height:1.8;"></div>
+              <button class="gbtn go" onclick="commitEnergy()" style="width:100%;">✅ COMMIT TO GRID</button>
+              <!-- Solution counter -->
+              <div id="e-score" style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--dimgray);text-align:center;"></div>
+            </div>
+          </div>
+        </div>
+      </div><!-- end #sim5 -->
+
+    </div><!-- end #workspace -->
+  </div><!-- end #content -->
+</div><!-- end #app -->
+
+<!-- Input number edit overlay (appears on double-click of INPUT block) -->
+<div id="edit-overlay">
+  <div class="edit-box">
+    <h3>✏️ SET INPUT VALUE</h3>
+    <input type="number" id="edit-val" value="0">
+    <div class="edit-row">
+      <button class="gbtn go"  onclick="confirmEdit()">✓ OK</button>
+      <button class="gbtn rst" onclick="cancelEdit()">✗ CANCEL</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     INACTIVITY TIMEOUT OVERLAY
+     ══════════════════════════════════════ -->
+<div id="timeout-overlay">
+  <div class="timeout-card">
+    <span class="timeout-icon">&#x23F0;</span>
+    <div class="timeout-title">Session Expiring Soon!</div>
+    <div class="timeout-msg">
+      You have been inactive for 5 minutes.<br>
+      Your session will close automatically in:
+    </div>
+    <div class="timeout-countdown" id="timeout-count">30</div>
+    <div class="timeout-btn-row">
+      <button class="timeout-stay-btn" onclick="stayLoggedIn()">&#x2705; I'm Still Here!</button>
+      <button class="timeout-logout-btn" onclick="logOut()">&#x1F6AA; Log Out Now</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast notification -->
+<div id="toast"></div>
+
+
+<script src="js/app.obfuscated.js"></script>
+</body>
+</html>
+HTMLEOF
+echo "File size: $(wc -c < /mnt/user-data/outputs/STEM_Academy_Final.html) bytes"
+echo "Lines: $(wc -l < /mnt/user-data/outputs/STEM_Academy_Final.html)"
+Output
