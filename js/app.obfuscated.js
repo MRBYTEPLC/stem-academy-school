@@ -3,7 +3,7 @@
    ================================================================ */
 /* ================================================================
    [SECTION: AUTHENTICATION — Login / Logout / Inactivity Timer]
-   Credentials: user = teacher  |  password = t1234
+   Credentials: user = 1234 |  password = 5678
    Inactivity timeout: 5 minutes idle → 30-second warning → auto logout
    ================================================================ */
 
