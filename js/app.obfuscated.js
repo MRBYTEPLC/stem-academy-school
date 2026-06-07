@@ -1,15 +1,5 @@
-/* ================================================================
-   LOGIN SCREEN — credentials check
-   ================================================================ */
-/* ================================================================
-   [SECTION: AUTHENTICATION — Login / Logout / Inactivity Timer]
-   Credentials: user = teacher  |  password = t1234
-   Inactivity timeout: 5 minutes idle → 30-second warning → auto logout
-   ================================================================ */
-
-// ── Inactivity timer state ──────────────────────────────────────────────────
-var IDLE_LIMIT_MS  = 5 * 60 * 1000;   // 5 minutes before warning
-var WARN_SECONDS   = 30;               // countdown shown in warning overlay
+var IDLE_LIMIT_MS  = 5 * 60 * 1000;   
+var WARN_SECONDS   = 30;              
 var   idleTimer      = null;
 var   warnTimer      = null;
 var   warnCountdown  = WARN_SECONDS;
@@ -112,14 +102,6 @@ document.addEventListener('keydown', e => {
     doLogin();
   }
 });
-
-
-/* ================================================================
-   [SECTION: VISIT & LIKE COUNTERS]
-   Real global visit counter via CountAPI (free, no auth needed).
-   Each login from any device/browser increments the shared count.
-   Likes remain per-device via localStorage.
-   ================================================================ */
 
 // CountAPI namespace — change 'stem-code-academy' to your school name
 // to avoid collisions with other apps using this service.
